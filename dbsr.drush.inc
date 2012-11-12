@@ -37,7 +37,10 @@ function dbsr_drush_command() {
  * Drush command callback.
  */
 function drush_dbsr_database_search_replace($searchstring, $replacestring) {
-  drush_print("\nSearch string is " . $searchstring . "\n");
-  drush_print("\nReplacement string is " . $replacestring . "\n");
+  if (!drush_confirm(dt('You are going to search for "!searchstring" and replace it with "!replacestring" throughout the entire database. Are you sure you want to do this?', array("!searchstring" => $searchstring, "!replacestring" => $replacestring)))) {
+    return drush_user_abort();
+  }
+  drush_print("Search string is \"" . $searchstring . "\"");
+  drush_print("Replacement string is \"" . $replacestring . "\"");
   
 }
