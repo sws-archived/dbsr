@@ -33,3 +33,11 @@ function dbsr_drush_command() {
   return $items;
 }
 
+/**
+ * Drush command callback.
+ */
+function drush_dbsr_database_search_replace($searchstring, $replacestring) {
+  drush_print("\nSearch string is " . $searchstring . "\n");
+  drush_print("\nReplacement string is " . $replacestring . "\n");
+  
+}
