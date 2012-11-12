@@ -37,10 +37,25 @@ function dbsr_drush_command() {
  * Drush command callback.
  */
 function drush_dbsr_database_search_replace($searchstring, $replacestring) {
-  if (!drush_confirm(dt('You are going to search for "!searchstring" and replace it with "!replacestring" throughout the entire database. Are you sure you want to do this?', array("!searchstring" => $searchstring, "!replacestring" => $replacestring)))) {
+  $has_table_option = FALSE;
+  if ($tables = drush_get_option('tables')) {
+    $tables = explode(',', $tables);
+    $has_table_option = TRUE;
+  }
+  else {
+    $tables = db_find_tables("%");
+  }
+  if ($has_table_option) {
+    $selected_tables = 'in the following tables: ' . implode(',', $tables);
+  }
+  else {
+    $selected_tables = 'throughout the entire database';
+  }
+  if (!drush_confirm(dt('You are going to search for "!searchstring" and replace it with "!replacestring" !selectedtables. Are you sure you want to do this?', array("!searchstring" => $searchstring, "!replacestring" => $replacestring, "!selectedtables" => $selected_tables)))) {
     return drush_user_abort();
   }
   drush_print("Search string is \"" . $searchstring . "\"");
   drush_print("Replacement string is \"" . $replacestring . "\"");
+//  drush_print_r($tables);
   
 }
