@@ -28,7 +28,7 @@ function dbsr_drush_command() {
       'drush dbsr foo bar' => 'Replace every occurrence of "foo" with "bar" in the database',
     ),
     'aliases' => array('dbsr'),
-    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL,
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_DATABASE,
   );
   return $items;
 }
