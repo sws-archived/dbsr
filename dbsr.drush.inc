@@ -28,7 +28,7 @@ function dbsr_drush_command() {
       'drush dbsr foo bar' => 'Replace every occurrence of "foo" with "bar" in the database',
     ),
     'aliases' => array('dbsr'),
-    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_DATABASE,
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL,
   );
   return $items;
 }
@@ -37,14 +37,23 @@ function dbsr_drush_command() {
  * Drush command callback.
  */
 function drush_dbsr_database_search_replace($searchstring, $replacestring) {
+  //--tables option is not set by default
   $has_table_option = FALSE;
+  //if the user passes the --tables option
   if ($tables = drush_get_option('tables')) {
+    //$tables is a numerically-keyed array of the list sent by the user
     $tables = explode(',', $tables);
+    //and our option is true
     $has_table_option = TRUE;
   }
   else {
-    $tables = db_find_tables("%");
+    //$tables is an numerically-keyed array of table names
+    $schema = drupal_get_schema(NULL, TRUE);
+    foreach ($schema as $key => $value) {
+      $tables[] = $key;
+    }
   }
+  //prep for the confirmation step
   if ($has_table_option) {
     $selected_tables = 'in the following tables: ' . implode(',', $tables);
   }
@@ -56,6 +65,17 @@ function drush_dbsr_database_search_replace($searchstring, $replacestring) {
   }
   drush_print("Search string is \"" . $searchstring . "\"");
   drush_print("Replacement string is \"" . $replacestring . "\"");
-//  drush_print_r($tables);
-  
+  // load a table (for each table) :
+  foreach ($tables as $key => $table) {
+    //get the table schema
+    $schema = drupal_get_schema($table);
+    // find primary keys, if it/they exist(s)
+    drush_print_r($schema['primary key']);
+    //TODO:
+    //if (isset($schema['primary key'])) // not sure if we need to check this, or best way
+    // load first row (for each row) :
+      // for each column:
+        // if primary key && value changes, make a note of it
+        // run recursive serialization function - recursive_unserialize_replace() from searchreplacedb2.php
+  }
 }
